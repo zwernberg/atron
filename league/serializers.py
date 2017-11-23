@@ -16,3 +16,11 @@ class TeamSerializer(serializers.Serializer):
     teamNickname = serializers.CharField()
     teamAbbrev = serializers.CharField()
     record = RecordSerializer()
+    teamName = serializers.SerializerMethodField()
+    fullRecord = serializers.SerializerMethodField()
+
+    def get_teamName(self, obj):
+        return (obj['teamLocation'] + " " + obj['teamNickname'])
+
+    def get_fullRecord(self, obj):
+        return (str(obj['record']['overallWins'])+'-'+ str(obj['record']['overallLosses']))
