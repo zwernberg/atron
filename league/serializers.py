@@ -7,6 +7,13 @@ class RecordSerializer(serializers.Serializer):
     overallLosses = serializers.IntegerField()
     overallTies = serializers.IntegerField()
 
+class OwnerSerializer(serializers.Serializer):
+    firstName = serializers.CharField()
+    lastName = serializers.CharField()
+    primaryOwner = serializers.BooleanField()
+    ownerId = serializers.IntegerField()
+    userProfileId = serializers.IntegerField()
+
 class TeamSerializer(serializers.Serializer):
     divisionStanding = serializers.IntegerField()
     overallStanding = serializers.IntegerField()
@@ -16,8 +23,12 @@ class TeamSerializer(serializers.Serializer):
     teamNickname = serializers.CharField()
     teamAbbrev = serializers.CharField()
     record = RecordSerializer()
+    owners = serializers.SerializerMethodField()
     teamName = serializers.SerializerMethodField()
     fullRecord = serializers.SerializerMethodField()
+
+    def get_owners(self, obj):
+        return OwnerSerializer(obj['owners'][0]).data
 
     def get_teamName(self, obj):
         return (obj['teamLocation'] + " " + obj['teamNickname'])
