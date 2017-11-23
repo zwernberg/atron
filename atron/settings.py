@@ -23,12 +23,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '6j98kaf_n=przz&or74=d1c%qe1l1xts#$st5lo7y%#_sxha3v'
+SECRET_KEY = env('DJANGO_SECRET_KEY', default='2%`u9mP71%6RwsuD`[415[ktm<?$Ty}fvYEso>-5_5%8@|]cg{')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DJANGO_DEBUG', True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['schumacher.football', ])
 
 ## ESPN SETTINGS
 
