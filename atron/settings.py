@@ -28,7 +28,7 @@ SECRET_KEY = env('DJANGO_SECRET_KEY', default='2%`u9mP71%6RwsuD`[415[ktm<?$Ty}fv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DJANGO_DEBUG', True)
 
-ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['schumacher.football', ])
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['schumacher.football', '127.0.0.1' ])
 
 ## ESPN SETTINGS
 
@@ -91,6 +91,13 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache_table',
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -129,7 +136,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 ## static
-STATIC_URL = env('STATIC_URL')
-STATIC_ROOT = env('STATIC_ROOT')
+STATIC_URL = env('STATIC_URL', default='/static/')
+STATIC_ROOT = env('STATIC_ROOT', default='')
 
 
