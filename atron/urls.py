@@ -18,8 +18,8 @@ from django.contrib import admin
 from league import views
 
 urlpatterns = [
-    url(r'^league/$', views.league_settings),
-    url(r'^scoreboard/$', views.scoreboard_view),
-    url(r'^standings/$', views.standings_view),
-    url(r'^admin/', admin.site.urls),
+    url(r'^api/league/$', views.league_settings),
+    url(r'^api/scoreboard/$', views.scoreboard_view),
+    url(r'^api/standings/$', views.standings_view),
+    url(r'^api/admin/', admin.site.urls),
 ]
