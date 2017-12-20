@@ -72,6 +72,7 @@ def standings_view(request):
 @api_view(['GET',])
 def championship_view(request):
     data = []
+    status_code = ''
     teams = Team.objects.all().prefetch_related('players')
     for team in teams:
         players = []
@@ -93,8 +94,8 @@ def championship_view(request):
             'players': players_result,
 
         }
-        # pdb.set_trace()
+        status_code = team_result.status_code
         results = serializers.smallTeamSerializer(team_obj)
         data.append(results.data)
         
-    return Response(data, results.status_code)
+    return Response(data, status_code)
