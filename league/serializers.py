@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from league.models import Team
-import pdb
+from decimal import Decimal
 
 class RecordSerializer(serializers.Serializer):
     pointsFor = serializers.DecimalField(max_digits=10, decimal_places=3)
@@ -58,13 +58,12 @@ class PlayerSerializer(serializers.Serializer):
         return ((obj['player']['firstName'])) + " " + (obj['player']['lastName'])
 
     def get_projectedPoints(self, obj):
-        #pdb.set_trace()
-        return (obj['currentPeriodProjectedStats']['appliedStatTotal'])
+        return (round(obj['currentPeriodProjectedStats']['appliedStatTotal'],2))
     
     def get_actualPoints(self, obj):
         if (not obj['currentPeriodRealStats'] or not obj['currentPeriodRealStats']['appliedStatTotal']):
             return 0
-        return (obj['currentPeriodRealStats']['appliedStatTotal'])
+        return (round(obj['currentPeriodRealStats']['appliedStatTotal'], 2))
 
 class smallTeamSerializer(serializers.Serializer):
     team_name = serializers.CharField()
@@ -81,11 +80,11 @@ class smallTeamSerializer(serializers.Serializer):
         total = 0
         for player in obj['players']:
             total += player['currentPeriodProjectedStats']['appliedStatTotal']
-        return total
+        return round(total, 2)
 
     def get_actual_total(self, obj):
         total = 0
         for player in obj['players']:
                 if (player['currentPeriodRealStats'] and obj['currentPeriodRealStats']['appliedStatTotal']):
                     total += (player['currentPeriodRealStats']['appliedStatTotal'])
-        return total
+        return round(total, 2)

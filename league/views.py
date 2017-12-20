@@ -68,7 +68,7 @@ def standings_view(request):
     return Response(data, bob.status_code)
 
 
-## @cache_page(10)
+@cache_page(10)
 @api_view(['GET',])
 def championship_view(request):
     data = []
