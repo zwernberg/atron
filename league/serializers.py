@@ -1,5 +1,8 @@
 from rest_framework import serializers
 
+from league.models import Team
+import pdb
+
 class RecordSerializer(serializers.Serializer):
     pointsFor = serializers.DecimalField(max_digits=10, decimal_places=3)
     pointsAgainst = serializers.DecimalField(max_digits=10, decimal_places=3)
@@ -35,3 +38,54 @@ class TeamSerializer(serializers.Serializer):
 
     def get_fullRecord(self, obj):
         return (str(obj['record']['overallWins'])+'-'+ str(obj['record']['overallLosses']))
+
+class PlayerSerializer(serializers.Serializer):
+    projectedPoints = serializers.SerializerMethodField()
+    actualPoints = serializers.SerializerMethodField()
+    position = serializers.SerializerMethodField()
+    firstName = serializers.SerializerMethodField()
+    lastName = serializers.SerializerMethodField()
+    fullName = serializers.SerializerMethodField()
+    def get_position(self, obj):
+        return (obj['player']['defaultPositionId'])
+
+    def get_firstName(self, obj):
+        return (obj['player']['firstName'])
+    def get_lastName(self, obj):
+        return (obj['player']['lastName'])
+
+    def get_fullName(self, obj):
+        return ((obj['player']['firstName'])) + " " + (obj['player']['lastName'])
+
+    def get_projectedPoints(self, obj):
+        #pdb.set_trace()
+        return (obj['currentPeriodProjectedStats']['appliedStatTotal'])
+    
+    def get_actualPoints(self, obj):
+        if (not obj['currentPeriodRealStats'] or not obj['currentPeriodRealStats']['appliedStatTotal']):
+            return 0
+        return (obj['currentPeriodRealStats']['appliedStatTotal'])
+
+class smallTeamSerializer(serializers.Serializer):
+    team_name = serializers.CharField()
+    team_owner = serializers.CharField()
+    league_id = serializers.CharField()
+    avatarUrl = serializers.CharField()
+    division = serializers.CharField()
+    projected_total = serializers.SerializerMethodField()
+    actual_total = serializers.SerializerMethodField()
+    players = PlayerSerializer(many=True)
+
+
+    def get_projected_total(self, obj):
+        total = 0
+        for player in obj['players']:
+            total += player['currentPeriodProjectedStats']['appliedStatTotal']
+        return total
+
+    def get_actual_total(self, obj):
+        total = 0
+        for player in obj['players']:
+                if (player['currentPeriodRealStats'] and obj['currentPeriodRealStats']['appliedStatTotal']):
+                    total += (player['currentPeriodRealStats']['appliedStatTotal'])
+        return total

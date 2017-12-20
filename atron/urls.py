@@ -21,6 +21,7 @@ from league import views
 urlpatterns = [
     url(r'^api/league/$', views.league_settings),
     url(r'^api/scoreboard/$', views.scoreboard_view),
+    url(r'^api/championship/$', views.championship_view),
     url(r'^api/standings/$', views.standings_view),
     url(r'^api/admin/', admin.site.urls),
 ]
