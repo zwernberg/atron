@@ -97,4 +97,4 @@ def championship_view(request):
         results = serializers.smallTeamSerializer(team_obj)
         data.append(results.data)
         
-    return Response(data, 302)
+    return Response(data, results.status_code)
