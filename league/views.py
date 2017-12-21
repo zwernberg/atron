@@ -76,7 +76,7 @@ def championship_view(request):
     teams = Team.objects.all().prefetch_related('players')
     for team in teams:
         players = []
-        for player in team.players.all():
+        for player in team.players.filter(starting=True):
             players.append(player.player_Id)
         params = {
             'playerId': ",".join(players),
