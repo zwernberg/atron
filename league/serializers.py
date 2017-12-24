@@ -85,6 +85,6 @@ class smallTeamSerializer(serializers.Serializer):
     def get_actual_total(self, obj):
         total = 0
         for player in obj['players']:
-                if (player['currentPeriodRealStats'] and obj['currentPeriodRealStats']['appliedStatTotal']):
+                if (player['currentPeriodRealStats'] and player['currentPeriodRealStats']['appliedStatTotal']):
                     total += (player['currentPeriodRealStats']['appliedStatTotal'])
         return round(total, 2)
