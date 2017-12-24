@@ -79,12 +79,17 @@ class smallTeamSerializer(serializers.Serializer):
     def get_projected_total(self, obj):
         total = 0
         for player in obj['players']:
-            total += player['currentPeriodProjectedStats']['appliedStatTotal']
+            temp = 0
+            if (player['currentPeriodRealStats'] and player['currentPeriodRealStats']['appliedStatTotal']):
+                temp = player['currentPeriodRealStats']['appliedStatTotal']
+            else:
+                temp = player['currentPeriodProjectedStats']['appliedStatTotal']
+            total += temp
         return round(total, 2)
 
     def get_actual_total(self, obj):
         total = 0
         for player in obj['players']:
-                if (player['currentPeriodRealStats'] and obj['currentPeriodRealStats']['appliedStatTotal']):
+                if (player['currentPeriodRealStats'] and player['currentPeriodRealStats']['appliedStatTotal']):
                     total += (player['currentPeriodRealStats']['appliedStatTotal'])
         return round(total, 2)
