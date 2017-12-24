@@ -81,7 +81,7 @@ class smallTeamSerializer(serializers.Serializer):
         for player in obj['players']:
             temp = 0
             if (player['currentPeriodRealStats'] and player['currentPeriodRealStats']['appliedStatTotal']):
-                temp = player['currentPeriodRealStats']['appliedStatTotal']
+                temp = max(player['currentPeriodProjectedStats']['appliedStatTotal'], player['currentPeriodRealStats']['appliedStatTotal'])
             else:
                 temp = player['currentPeriodProjectedStats']['appliedStatTotal']
             total += temp
