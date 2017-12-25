@@ -17,6 +17,12 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from atron import settings
 from league import views
+from rest_framework.routers import DefaultRouter
+from messaging.views import MessageViewSet
+
+router = DefaultRouter()
+router.register(r'api/messages', MessageViewSet, base_name='message')
+
 
 urlpatterns = [
     url(r'^api/league/$', views.league_settings),
@@ -25,6 +31,7 @@ urlpatterns = [
     url(r'^api/standings/$', views.standings_view),
     url(r'^api/admin/', admin.site.urls),
 ]
+urlpatterns += router.urls
 
 if settings.DEBUG:
     import debug_toolbar
