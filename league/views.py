@@ -51,7 +51,7 @@ def scoreboard_view(request):
 
     return Response(data, status)
 
-@cache_page(60 * 24)
+@cache_page(10)
 @api_view(['GET',])
 def standings_view(request):
 
