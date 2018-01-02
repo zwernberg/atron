@@ -8,7 +8,7 @@ from django.views.decorators.cache import cache_page
 from atron import settings
 from league import serializers
 
-from league.models import Team, Player
+from league.models import Team, Player, League
 
 import requests
 
@@ -51,21 +51,20 @@ def scoreboard_view(request):
 
     return Response(data, status)
 
-@cache_page(60 * 5)
+#@cache_page(60 * 5)
 @api_view(['GET',])
 def standings_view(request):
 
-    bob = fetch('leagueSettings', settings.BOB_ID)
-    dot = fetch('leagueSettings', settings.DOT_ID)
-    bob_teams = bob.json()['leaguesettings']['teams'].values()
-    dot_teams = dot.json()['leaguesettings']['teams'].values()
-    bob_serialized = serializers.TeamSerializer(bob_teams, many=True)
-    dot_serialized = serializers.TeamSerializer(dot_teams, many=True)
-    data = {
-        'dot': dot_serialized.data,
-        'bob': bob_serialized.data
-    }
-    return Response(data, bob.status_code)
+    data = {}
+    leagues = League.objects.all()
+    status_code = ''
+    for league in leagues:
+        res = fetch('leagueSettings', league.league_id)
+        val = res.json()['leaguesettings']['teams'].values()
+        team_serialized = serializers.TeamSerializer(val, many=True)
+        data[league.division] = team_serialized.data
+        status_code = res.status_code
+    return Response(data, status_code)
 
 
 @cache_page(10)

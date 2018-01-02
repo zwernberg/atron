@@ -8,6 +8,13 @@ positions = (
     )
 
 # Create your models here.
+class League(models.Model):
+    division = models.CharField(max_length = 50)
+    league_id = models.CharField(max_length=150)
+
+    def __str__(self):
+        return self.division
+
 class Team(models.Model):
     team_name = models.CharField(max_length=150)
     team_owner = models.CharField(max_length=150)
