@@ -41,15 +41,45 @@ def league_settings(request):
 @cache_page(20)
 @api_view(['GET',])
 def scoreboard_view(request):
-    params = {
-        'leagueId': settings.BOB_ID,
-        'seasonId': settings.YEAR
+    data = {
+        'leagues': [],
     }
-    r = fetch('scoreboard', settings.BOB_ID)
-    status = r.status_code
-    data = r.json()
+    leagues = League.objects.all()
+    status_code = ''
+    matchupPeriodId = request.GET.get('matchupPeriodId', '')
 
-    return Response(data, status)
+    for league in leagues:
+        params = {
+            'leagueId': league.league_id,
+            'seasonId': request.GET.get('year', settings.YEAR),
+            'matchupPeriodId': matchupPeriodId
+        }
+
+        res = fetch('scoreboard', league.league_id, extra_params = params)
+        val = res.json()
+        val['metadata']['division'] = league.division
+        
+        # for matchup in val['scoreboard']['matchups']:
+        #     players = []
+        #     for team in matchup['teams']:
+        #         params = {
+        #             'playerId': ",".join(str(v) for v in team['playerIDs']),
+        #             'useCurrentPeriodProjectedStats': True,
+        #             'useCurrentPeriodRealStats': True,
+        #             'includeRankings': False,
+        #             'includeProjectionText': False,
+        #             'includeOwnPotentialTradeTransactions': False,
+        #             'includeLatestNews': False,
+        #             'matchupPeriodId': matchupPeriodId
+        #         }
+        #         team_result = fetch('playerInfo', league.league_id, extra_params= params)
+        #         players = team_result.json()['playerInfo']['players']
+        #         team['players'] = players
+
+        status_code = res.status_code
+        data['leagues'].append(val)
+
+    return Response(data, status_code)
 
 @cache_page(10)
 @api_view(['GET',])
@@ -62,10 +92,33 @@ def standings_view(request):
         res = fetch('leagueSettings', league.league_id)
         val = res.json()['leaguesettings']['teams'].values()
         team_serialized = serializers.TeamSerializer(val, many=True)
-        data[league.division] = team_serialized.data
+        data[league.league_id] = team_serialized.data
         status_code = res.status_code
     return Response(data, status_code)
 
+
+@api_view(['GET',])
+def team_view(request):
+    data = {}
+    leagues = League.objects.all()
+    status_code = ''
+    for league in leagues:
+        teams = range(1, league.size + 1)
+        params = {
+            'leagueId': league.league_id,
+            'seasonId': request.GET.get('year', settings.YEAR),
+            'matchupPeriodId': request.GET.get('matchupPeriodId', ''),
+            'teamIds': teams
+        }
+        res = fetch('rosterInfo', league.league_id, extra_params = params)
+        val = res.json().values()
+        
+        #team_serialized = serializers.TeamSerializer(val, many=True)
+        #data[league.league_id] = team_serialized.data
+        status_code = res.status_code
+        data[league.division] = val
+
+    return Response(data, status_code)
 
 @cache_page(10)
 @api_view(['GET',])

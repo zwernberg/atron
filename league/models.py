@@ -11,6 +11,7 @@ positions = (
 class League(models.Model):
     division = models.CharField(max_length = 50)
     league_id = models.CharField(max_length=150)
+    size = models.IntegerField()
 
     def __str__(self):
         return self.division
@@ -29,7 +30,7 @@ class Team(models.Model):
 class Player(models.Model):
     team = models.ForeignKey(Team, related_name='players')
     name = models.CharField(max_length=150)
-    position = models.IntegerField(choices=positions, max_length=10)
+    position = models.IntegerField(choices=positions)
     player_Id = models.CharField(max_length=150)
     starting = models.BooleanField(default=True)
 

@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^api/scoreboard/$', views.scoreboard_view),
     url(r'^api/championship/$', views.championship_view),
     url(r'^api/standings/$', views.standings_view),
+    url(r'^api/teams/$', views.team_view),
     url(r'^api/admin/', admin.site.urls),
 ]
 urlpatterns += router.urls
