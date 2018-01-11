@@ -15,16 +15,20 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.urls import path
 from atron import settings
 from league import views
 from rest_framework.routers import DefaultRouter
 from messaging.views import MessageViewSet
+
+from week import urls as weekUrls
 
 router = DefaultRouter()
 router.register(r'api/messages', MessageViewSet, base_name='message')
 
 
 urlpatterns = [
+    path('api/week/', include('week.urls', namespace='week')),
     url(r'^api/league/$', views.league_settings),
     url(r'^api/scoreboard/$', views.scoreboard_view),
     url(r'^api/championship/$', views.championship_view),

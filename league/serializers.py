@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from league.models import Team
+from league.models import Team, Note
 from decimal import Decimal
 
 class RecordSerializer(serializers.Serializer):
@@ -93,3 +93,8 @@ class smallTeamSerializer(serializers.Serializer):
                 if (player['currentPeriodRealStats'] and player['currentPeriodRealStats']['appliedStatTotal']):
                     total += (player['currentPeriodRealStats']['appliedStatTotal'])
         return round(total, 2)
+
+class NoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Note
+        fields = ('author', 'week', 'text')

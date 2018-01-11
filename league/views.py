@@ -8,6 +8,7 @@ from django.views.decorators.cache import cache_page
 from atron import settings
 from league import serializers
 
+import league.service as service
 from league.models import Team, Player, League
 
 import requests
@@ -32,7 +33,7 @@ def league_settings(request):
         'leagueId': settings.BOB_ID,
         'seasonId': settings.YEAR
     }
-    r = fetch('leagueSettings', settings.BOB_ID)
+    r = service.fetch('leagueSettings', settings.BOB_ID)
     status = r.status_code
     data = r.json()
 
@@ -41,45 +42,12 @@ def league_settings(request):
 @cache_page(20)
 @api_view(['GET',])
 def scoreboard_view(request):
-    data = {
-        'leagues': [],
-    }
     leagues = League.objects.all()
-    status_code = ''
     matchupPeriodId = request.GET.get('matchupPeriodId', '')
+   
+    response = service.fetchWeek(leagues, matchupPeriodId, settings.YEAR)
 
-    for league in leagues:
-        params = {
-            'leagueId': league.league_id,
-            'seasonId': request.GET.get('year', settings.YEAR),
-            'matchupPeriodId': matchupPeriodId
-        }
-
-        res = fetch('scoreboard', league.league_id, extra_params = params)
-        val = res.json()
-        val['metadata']['division'] = league.division
-        
-        # for matchup in val['scoreboard']['matchups']:
-        #     players = []
-        #     for team in matchup['teams']:
-        #         params = {
-        #             'playerId': ",".join(str(v) for v in team['playerIDs']),
-        #             'useCurrentPeriodProjectedStats': True,
-        #             'useCurrentPeriodRealStats': True,
-        #             'includeRankings': False,
-        #             'includeProjectionText': False,
-        #             'includeOwnPotentialTradeTransactions': False,
-        #             'includeLatestNews': False,
-        #             'matchupPeriodId': matchupPeriodId
-        #         }
-        #         team_result = fetch('playerInfo', league.league_id, extra_params= params)
-        #         players = team_result.json()['playerInfo']['players']
-        #         team['players'] = players
-
-        status_code = res.status_code
-        data['leagues'].append(val)
-
-    return Response(data, status_code)
+    return Response(response.data, response.status_code)
 
 @cache_page(10)
 @api_view(['GET',])
