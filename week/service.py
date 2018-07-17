@@ -7,7 +7,6 @@ def fetchMatchups(leagues, matchupPeriodId = '', seasonId = settings.YEAR):
         'leagues': [],
     }
     status_code = ''
-
     for league in leagues:
         params = {
             'leagueId': league.league_id,
@@ -39,7 +38,7 @@ def fetchMatchups(leagues, matchupPeriodId = '', seasonId = settings.YEAR):
         status_code = res.status_code
         data['leagues'].append(val)
 
-        return {
-            'data': data,
-            'status_code': status_code
-        }
+    return {
+        'data': data,
+        'status_code': status_code
+    }
